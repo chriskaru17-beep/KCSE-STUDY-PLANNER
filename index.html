@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KCSE Study Planner - Level Up!</title>
+<style>
+body{font-family:Arial;background:#f0f4ff;margin:0;padding:15px}
+.card{background:white;padding:15px;border-radius:15px;margin-bottom:15px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+h1{text-align:center;color:#1a237e}
+input,select,button{padding:10px;margin:5px 0;width:100%;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
+button{background:#1a237e;color:white;font-weight:bold;cursor:pointer;border:none}
+button:hover{background:#3949ab}
+.task{display:flex;justify-content:space-between;align-items:center;background:#e8eaf6;padding:10px;border-radius:10px;margin:5px 0}
+.done{text-decoration:line-through;opacity:.6}
+.badge{background:#ffca28;padding:3px 8px;border-radius:20px;font-size:12px}
+#xpbar{transition:.5s}
+.tip{background:#e8f5e9;border-left:5px solid #2e7d32;padding:10px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<h1>🎓 KCSE Study Planner</h1>
+<p style="text-align:center">Built in Kenya 🇰🇪 for students everywhere. Learn. Level Up. Pass.</p>
+
+<div class="card" style="text-align:center;background:#fff3cd">
+⭐ Level <span id="lvl">1</span> | XP: <span id="xp">0</span>/100 | 🔥 Streak: <span id="streak">7</span> Days
+<div style="background:#ddd;height:12px;border-radius:10px;margin-top:8px"><div id="xpbar" style="background:linear-gradient(90deg,#ff9800,#4caf50);height:12px;width:0%;border-radius:10px"></div></div>
+<div id="rank" style="margin-top:8px">🏆 Rank: Rising Star</div>
+</div>
+
+<div class="card" style="text-align:center;background:#1a237e;color:white">
+<h2>⏰ <span id="cd">...</span></h2>
+<p>Until KCSE 2027</p>
+<p id="quote">💡 "Discipline beats motivation."</p>
+</div>
+
+<div class="card">
+<h3>🤖 AI Exam Predictor</h3>
+<p id="predict">Add your tasks & mistakes and I will predict your grade!</p>
+<button onclick="predict()">🔮 Predict My Grade Now</button>
+</div>
+
+<div class="card">
+<h3>➕ Add Study Plan</h3>
+<input id="sub" placeholder="Subject e.g Physics">
+<input id="top" placeholder="Topic e.g Mechanics">
+<select id="pri"><option>High Priority 🔴</option><option>Medium 🟡</option><option>Low 🟢</option></select>
+<button onclick="addTask()">Add Plan + Get XP</button>
+<div id="list"></div>
+</div>
+
+<div class="card">
+<h3>❌ Mistake Tracker - Learn From Mistakes</h3>
+<input id="msub" placeholder="Subject where you made mistake">
+<input id="mmist" placeholder="What was the mistake?">
+<button onclick="addMistake()">Save Mistake</button>
+<div id="mlist"></div>
+</div>
+
+<div class="card">
+<h3>💡 AI Study Tip</h3>
+<div class="tip" id="tip">Click for a smart tip based on your progress!</div><br>
+<button onclick="getTip()">Get AI Tip ✨</button>
+</div>
+
+<script>
+let tasks=JSON.parse(localStorage.getItem('t')||'[]');
+let mistakes=JSON.parse(localStorage.getItem('m')||'[]');
+let xp=parseInt(localStorage.getItem('xp')||'0');
+let lvl=parseInt(localStorage.getItem('lvl')||'1');
+let exam=new Date('2027-10-25');
+let quotes=["💡 Discipline beats motivation.","🔥 Small steps every day = BIG results.","🏆 You are one session away from your dream grade.","📚 Top students don't wait, they plan.","💪 Your future self is watching you!"];
+document.getElementById('quote').innerText=quotes[Math.floor(Math.random()*quotes.length)];
+
+function save(){localStorage.setItem('t',JSON.stringify(tasks));localStorage.setItem('m',JSON.stringify(mistakes));localStorage.setItem('xp',xp);localStorage.setItem('lvl',lvl);}
+function updateXP(){
+  document.getElementById('xp').innerText=xp;
+  document.getElementById('lvl').innerText=lvl;
+  document.getElementById('xpbar').style.width=xp+'%';
+  let r=lvl>=5?'🏆 KCSE Legend':lvl>=3?'🥇 Top Achiever':lvl>=2?'🥈 Fast Learner':'🌱 Rising Star';
+  document.getElementById('rank').innerText='🏆 Rank: '+r;
+}
+function celebrate(){
+  xp+=20; if(xp>=100){xp=0; lvl++; setTimeout(()=>alert('🎉 LEVEL UP! You are now Level '+lvl+'!'),300);}
+  save(); updateXP();
+  for(let i=0;i<60;i++){
+    let c=document.createElement('div');
+    c.innerText=['🎉','⭐','🔥','💪','🎓','✨'][Math.floor(Math.random()*6)];
+    c.style.position='fixed'; c.style.left=Math.random()*100+'%'; c.style.top='-20px'; c.style.fontSize='26px'; c.style.zIndex=9999;
+    document.body.appendChild(c);
+    setTimeout(()=>{c.style.transition='2s'; c.style.top='100%'; c.style.transform='rotate(360deg)';},20);
+    setTimeout(()=>c.remove(),2100);
+  }
+}
+function addTask(){
+  let s=document.getElementById('sub').value, t=document.getElementById('top').value, p=document.getElementById('pri').value;
+  if(!s||!t) return alert('Fill subject and topic');
+  tasks.push({s,t,p,done:false}); save(); render(); celebrate();
+  document.getElementById('sub').value=''; document.getElementById('top').value='';
+}
+function addMistake(){
+  let s=document.getElementById('msub').value, m=document.getElementById('mmist').value;
+  if(!s||!m) return alert('Fill both');
+  mistakes.push({s,m}); save(); render();
+  document.getElementById('msub').value=''; document.getElementById('mmist').value='';
+}
+function render(){
+  document.getElementById('list').innerHTML=tasks.map((t,i)=>`<div class="task"><span class="${t.done?'done':''}">${t.s} - ${t.t} <span class="badge">${t.p}</span></span><button style="width:auto" onclick="toggle(${i})">${t.done?'↩ Undo':'✅ Complete'}</button></div>`).join('')||'No plans yet. Add one!';
+  document.getElementById('mlist').innerHTML=mistakes.map((m,i)=>`<div class="task">❌ <b>${m.s}:</b> ${m.m}</div>`).join('')||'No mistakes yet - great!';
+}
+function toggle(i){ tasks[i].done=!tasks[i].done; if(tasks[i].done) celebrate(); save(); render(); }
+function getTip(){
+  let tips=["Study in 25 min blocks, then 5 min break (Pomodoro).","Teach what you learned to a friend - you remember 90% more.","Do past papers every Saturday morning like a real exam.","Review your mistakes before starting new topics.","Sleep 7+ hours - your brain saves what you studied while you sleep."];
+  document.getElementById('tip').innerText='🤖 AI Tip: '+tips[Math.floor(Math.random()*tips.length)];
+}
+function predict(){
+  let done=tasks.filter(t=>t.done).length; let total=tasks.length||1; let score=Math.round((done/total)*100) - mistakes.length*5; score=Math.max(20,Math.min(98,score));
+  let grade=score>=80?'A - University Bound! 🎓':score>=65?'B+ - Excellent!':score>=50?'B - Good Progress!':score>=40?'C+ - Keep Pushing!':'C - You Can Improve!';
+  document.getElementById('predict').innerHTML=`<b>📊 Based on ${done}/${total} tasks done & ${mistakes.length} mistakes reviewed:</b><br><br><span style="font-size:32px">${score}%</span><br><b>Predicted Grade: ${grade}</b><br><small>Complete more tasks to raise your score!</small>`;
+  celebrate();
+}
+setInterval(()=>{let d=Math.ceil((exam-new Date())/86400000); document.getElementById('cd').innerText=d+' Days Left';},1000);
+updateXP(); render();
+</script>
+</body>
+</html>
