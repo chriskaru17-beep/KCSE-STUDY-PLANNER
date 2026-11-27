@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KCSE Study Planner</title>
+<style>body{font-family:Arial;background:#f2f6ff;margin:0;padding:16px}h1{color:#1a3a8a} .card{background:#fff;padding:16px;border-radius:12px;margin:12px 0;box-shadow:0 2px 8px #0001} button{background:#1a3a8a;color:#fff;border:0;padding:10px 16px;border-radius:8px} input,select,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px} li{margin:6px 0}</style></head>
+<body>
+<h1>📚 KCSE Study Planner</h1>
+<p>Plan, revise & track mistakes for KCSE. Built for Kenyan students.</p>
+
+<div class="card"><h2>⏰ Countdown to KCSE</h2><p id="count">Loading...</p></div>
+
+<div class="card"><h2>📅 Today's Plan</h2>
+<select id="subject"><option>Maths</option><option>English</option><option>Kiswahili</option><option>Chemistry</option><option>Physics</option><option>Biology</option><option>CRE</option><option>History</option></select>
+<input id="topic" placeholder="Topic e.g. Quadratic Equations">
+<button onclick="addPlan()">Add to Plan</button>
+<ul id="planList"></ul></div>
+
+<div class="card"><h2>❌ Mistake Tracker</h2>
+<input id="mistake" placeholder="What mistake did you make?">
+<input id="fix" placeholder="Correct answer / fix">
+<button onclick="addMistake()">Save Mistake</button>
+<ul id="mistakeList"></ul></div>
+
+<div class="card"><h2>🤖 AI Study Tip</h2><p id="tip">Tap for a tip!</p><button onclick="newTip()">Get Tip</button></div>
+
+<script>
+const tips=["Study in 25 min blocks, rest 5 mins.","Do past papers under timed conditions.","Teach a topic to a friend to remember it.","Review mistakes every Sunday.","Sleep 7 hours before exam - your brain needs it.","Start with hardest subject when you are fresh."];
+function newTip(){document.getElementById('tip').innerText=tips[Math.floor(Math.random()*tips.length)]}
+function addPlan(){let s=document.getElementById('subject').value,t=document.getElementById('topic').value;if(!t)return alert('Type topic');let li=document.createElement('li');li.innerText=s+' - '+t+' ✅';document.getElementById('planList').appendChild(li);document.getElementById('topic').value=''}
+function addMistake(){let m=document.getElementById('mistake').value,f=document.getElementById('fix').value;if(!m)return alert('Type mistake');let li=document.createElement('li');li.innerText='Mistake: '+m+' | Fix: '+f;document.getElementById('mistakeList').appendChild(li);document.getElementById('mistake').value='';document.getElementById('fix').value=''}
+let exam=new Date('2026-10-26');let today=new Date();let diff=Math.ceil((exam-today)/86400000);document.getElementById('count').innerText=diff+' days left. You can do it!';
+newTip();
+</script></body></html>
