@@ -27,6 +27,6 @@ const tips=["Study in 25 min blocks, rest 5 mins.","Do past papers under timed c
 function newTip(){document.getElementById('tip').innerText=tips[Math.floor(Math.random()*tips.length)]}
 function addPlan(){let s=document.getElementById('subject').value,t=document.getElementById('topic').value;if(!t)return alert('Type topic');let li=document.createElement('li');li.innerText=s+' - '+t+' ✅';document.getElementById('planList').appendChild(li);document.getElementById('topic').value=''}
 function addMistake(){let m=document.getElementById('mistake').value,f=document.getElementById('fix').value;if(!m)return alert('Type mistake');let li=document.createElement('li');li.innerText='Mistake: '+m+' | Fix: '+f;document.getElementById('mistakeList').appendChild(li);document.getElementById('mistake').value='';document.getElementById('fix').value=''}
-let exam=new Date('2026-10-26');let today=new Date();let diff=Math.ceil((exam-today)/86400000);document.getElementById('count').innerText=diff+' days left. You can do it!';
+let exam=new Date('2027-10-25');let today=new Date();let diff=Math.ceil((exam-today)/86400000);document.getElementById('count').innerText=diff+' days left. You can do it!';
 newTip();
 </script></body></html>
